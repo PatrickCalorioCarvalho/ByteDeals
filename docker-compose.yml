@@ -1,0 +1,94 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: bytedeals-rabbitmq
+    ports:
+      - "5672:5672"
+      - "${RABBITMQ_UI_PORT}:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    env_file: 
+      - .env
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  prometheus:
+    image: prom/prometheus
+    container_name: bytedeals-prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    env_file: 
+      - .env
+
+  grafana:
+    image: grafana/grafana
+    container_name: bytedeals-grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    env_file: 
+      - .env
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:latest
+    container_name: bytedeals-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: bytedeals-promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infra/promtail/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
+  bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    container_name: bytedeals-bot
+    restart: always
+    depends_on:
+      - rabbitmq
+    env_file: 
+      - .env
+
+  extractor:
+    build:
+      context: .
+      dockerfile: extractor/Dockerfile
+    container_name: bytedeals-extractor
+    restart: always
+    depends_on:
+      - rabbitmq
+    env_file: 
+      - .env
+
+  publisher:
+    build:
+      context: .
+      dockerfile: publisher/Dockerfile
+    container_name: bytedeals-publisher
+    restart: always
+    depends_on:
+      - rabbitmq
+    env_file: 
+      - .env  
+
+volumes:
+  rabbitmq-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:

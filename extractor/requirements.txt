@@ -1,0 +1,6 @@
+aio-pika
+prometheus-client
+pydantic
+beautifulsoup4
+lxml
+httpx

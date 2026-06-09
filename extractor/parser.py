@@ -1,4 +1,41 @@
 from bs4 import BeautifulSoup
+import re
+
+def extract_price(element):
+
+    if not element:
+        return None
+
+    fraction = element.select_one(
+        ".andes-money-amount__fraction"
+    )
+
+    cents = element.select_one(
+        ".andes-money-amount__cents"
+    )
+
+    if not fraction:
+        return None
+
+    value = fraction.get_text(strip=True)
+
+    if cents:
+        value += f",{cents.get_text(strip=True)}"
+
+    return value
+
+def parse_price(value: str):
+
+    if not value:
+        return 0.0
+
+    value = re.sub(r"[^\d,\.]", "", value)
+
+    value = value.replace(".", "")
+
+    value = value.replace(",", ".")
+
+    return float(value)
 
 def extract_product(html: str):
 
@@ -6,47 +43,79 @@ def extract_product(html: str):
 
     product = {}
 
-    title = soup.select_one(".poly-component__title")
+    # título
+    title = soup.select_one(
+        ".poly-component__title"
+    )
 
     if title:
-        product["title"] = title.get_text(strip=True)
 
-    image = soup.select_one(".poly-component__picture")
+        product["title"] = title.get_text(
+            strip=True
+        )
+
+        product["link"] = title.get("href")
+
+    # imagem
+    image = soup.select_one(
+        ".poly-component__picture"
+    )
 
     if image:
         product["image"] = image.get("src")
 
-    if title:
-        product["link"] = title.get("href")
+    # preço antigo
+    old_price_element = soup.select_one(
+        ".andes-money-amount--previous"
+    )
 
-    amounts = soup.select(".andes-money-amount")
+    old_price = extract_price(
+        old_price_element
+    )
 
-    prices = []
+    # preço atual
+    current_price_element = soup.select_one(
+        ".poly-price__current .andes-money-amount"
+    )
 
-    for amount in amounts:
+    new_price = extract_price(
+        current_price_element
+    )
 
-        fraction = amount.select_one(
-            ".andes-money-amount__fraction"
-        )
+    product["old_price"] = old_price
+    product["new_price"] = new_price
 
-        cents = amount.select_one(
-            ".andes-money-amount__cents"
-        )
+    try:
 
-        if fraction:
+        old_value = parse_price(old_price)
 
-            value = fraction.get_text(strip=True)
+        new_value = parse_price(new_price)
 
-            if cents:
-                value += f",{cents.get_text(strip=True)}"
+        if old_value > 0:
 
-            prices.append(value)
+            discount = round(
+                (
+                    (old_value - new_value)
+                    / old_value
+                ) * 100
+            )
 
-    if len(prices) >= 1:
-        product["old_price"] = prices[0]
+            economy = round(
+                old_value - new_value,
+                2
+            )
 
-    if len(prices) >= 2:
-        product["new_price"] = prices[1]
+            product["discount"] = discount
+
+            product["economy"] = (
+                f"{economy:,.2f}"
+                .replace(",", "X")
+                .replace(".", ",")
+                .replace("X", ".")
+            )
+
+    except Exception as e:
+
+        print("Erro cálculo:", e)
 
     return product
-

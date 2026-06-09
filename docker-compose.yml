@@ -10,6 +10,12 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
     env_file: 
       - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
@@ -54,6 +60,48 @@ services:
     depends_on:
       - loki
 
+  ollama:
+    image: ollama/ollama
+    container_name: bytedeals-ollama
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_KEEP_ALIVE=24h
+    volumes:
+     - ollama_data:/root/.ollama
+    restart: always
+
+  ollama-init:
+    image: curlimages/curl
+    container_name: bytedeals-ollama-init
+    depends_on:
+      - ollama
+    entrypoint: >
+      sh -c "
+        echo 'Esperando Ollama...';
+        
+        until curl -s http://ollama:11434/api/tags;
+        do
+          sleep 2;
+        done;
+
+        echo 'Baixando modelo...';
+
+        curl http://ollama:11434/api/pull -d '{
+          \"name\": \"qwen2.5:1.5b\"
+        }';
+
+        echo 'Aquecendo modelo...';
+
+        curl http://ollama:11434/api/generate -d '{
+          \"model\": \"qwen2.5:1.5b\",
+          \"prompt\": \"oi\",
+          \"stream\": false
+        }';
+
+        echo 'Modelo pronto!';
+      "
+
   bot:
     build:
       context: .
@@ -61,7 +109,8 @@ services:
     container_name: bytedeals-bot
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file: 
       - .env
 
@@ -72,7 +121,8 @@ services:
     container_name: bytedeals-extractor
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file: 
       - .env
 
@@ -83,12 +133,31 @@ services:
     container_name: bytedeals-publisher
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file: 
       - .env  
+
+  agentia:
+    build:
+      context: .
+      dockerfile: agentIA/Dockerfile
+    container_name: bytedeals-agentia
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+      ollama-init:
+        condition: service_completed_successfully
+    env_file: 
+      - .env 
 
 volumes:
   rabbitmq-data:
   prometheus-data:
   grafana-data:
   loki-data:
+  ollama_data:
+

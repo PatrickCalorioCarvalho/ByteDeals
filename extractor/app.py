@@ -6,11 +6,10 @@ from core.config.settings import settings
 from core.telemetry.logger import logger
 from extractor.parser import extract_product
 from extractor.downloader import fetch_html
-from extractor.formatter import format_product_message
-from core.rabbit.publisher import RabbitPublisher
-from core.events.product_formatted import (
-    ProductFormattedEvent
+from core.events.product_extracted import (
+ProductExtractedEvent
 )
+from core.rabbit.publisher import RabbitPublisher
 from core.telemetry.metrics import (
     MESSAGES_TOTAL,
     PROCESSING_TIME
@@ -53,31 +52,22 @@ message: aio_pika.IncomingMessage
                         "correlation_id": body.get("correlation_id")
                     }
                 )
-                
-                formatted_message = format_product_message(product,url)
-
-                print("\n===================")
-                print("MENSAGEM FORMATADA")
-                print("===================")
-                print(formatted_message)
-                print("===================\n")
-
-                formatted_event = ProductFormattedEvent(
+                extracted_event = ProductExtractedEvent(
                     correlation_id=body.get("correlation_id"),
                     chat_id=body.get("chat_id"),
                     title=product.get("title"),
                     image=product.get("image"),
                     old_price=product.get("old_price"),
                     new_price=product.get("new_price"),
-                    link=product.get("link"),
-                    message=formatted_message
+                    discount=product.get("discount"),
+                    economy=product.get("economy"),
+                    link=url
+                )
+                await publisher.publish(
+                    "product.extracted",
+                    extracted_event
                 )
 
-                await publisher.publish(
-                    "product.formatted",
-                    formatted_event
-                )
-                
                 logger.info(
                     "Processamento concluído com sucesso",
                     extra={

@@ -1,264 +1,344 @@
 {
   "id": null,
-  "uid": "bytedeals-ops",
+  "uid": "bytedeals-ops-center",
   "title": "ByteDeals Operations Center",
+  "tags": [
+    "bytedeals",
+    "operations",
+    "observability"
+  ],
+  "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
-  "refresh": "5s",
+  "refresh": "10s",
   "editable": true,
   "panels": [
 
     {
       "id": 1,
-      "title": "Bot Messages",
       "type": "stat",
+      "title": "Bot Messages",
       "targets": [
         {
           "expr": "bot_messages_received_total"
         }
       ],
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 0,
-        "y": 0
+        "y": 0,
+        "w": 6,
+        "h": 4
       }
     },
 
     {
       "id": 2,
-      "title": "Products Extracted",
       "type": "stat",
+      "title": "Products Extracted",
       "targets": [
         {
           "expr": "product_extracted_total"
         }
       ],
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 0
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
       }
     },
 
     {
       "id": 3,
-      "title": "Products Enriched",
       "type": "stat",
+      "title": "Products Enriched",
       "targets": [
         {
           "expr": "product_enriched_total"
         }
       ],
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 0
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
       }
     },
 
     {
       "id": 4,
-      "title": "Products Published",
       "type": "stat",
+      "title": "Products Published",
       "targets": [
         {
           "expr": "product_published_total"
         }
       ],
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 0
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
       }
     },
 
     {
       "id": 5,
-      "title": "Total Errors",
-      "type": "stat",
+      "type": "timeseries",
+      "title": "Pipeline Flow",
       "targets": [
         {
-          "expr": "errors_total"
+          "expr": "product_received_total",
+          "legendFormat": "Received"
+        },
+        {
+          "expr": "product_extracted_total",
+          "legendFormat": "Extracted"
+        },
+        {
+          "expr": "product_enriched_total",
+          "legendFormat": "Enriched"
+        },
+        {
+          "expr": "product_published_total",
+          "legendFormat": "Published"
         }
       ],
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 0
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 8
       }
     },
 
     {
       "id": 6,
-      "title": "Events",
-      "type": "stat",
-      "targets": [
-        {
-          "expr": "events_total"
-        }
-      ],
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      }
-    },
-
-    {
-      "id": 7,
-      "title": "Pipeline Flow",
       "type": "timeseries",
-      "targets": [
-        {
-          "expr": "product_received_total"
-        },
-        {
-          "expr": "product_extracted_total"
-        },
-        {
-          "expr": "product_enriched_total"
-        },
-        {
-          "expr": "product_published_total"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      }
-    },
-
-    {
-      "id": 8,
-      "title": "Bot Processing Time",
-      "type": "timeseries",
+      "title": "Bot Processing",
       "targets": [
         {
           "expr": "rate(bot_processing_seconds_sum[5m]) / rate(bot_processing_seconds_count[5m])"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 12,
         "x": 0,
-        "y": 12
+        "y": 12,
+        "w": 6,
+        "h": 8
       }
     },
 
     {
-      "id": 9,
-      "title": "Extractor Processing Time",
+      "id": 7,
       "type": "timeseries",
+      "title": "Extractor Processing",
       "targets": [
         {
           "expr": "rate(extractor_processing_seconds_sum[5m]) / rate(extractor_processing_seconds_count[5m])"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 12
+        "x": 6,
+        "y": 12,
+        "w": 6,
+        "h": 8
       }
     },
 
     {
-      "id": 10,
-      "title": "AI Generation Time",
+      "id": 8,
       "type": "timeseries",
+      "title": "AI Generation",
       "targets": [
         {
           "expr": "rate(ai_generation_seconds_sum[5m]) / rate(ai_generation_seconds_count[5m])"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 20
+        "x": 12,
+        "y": 12,
+        "w": 6,
+        "h": 8
       }
     },
 
     {
-      "id": 11,
-      "title": "Publisher Processing Time",
+      "id": 9,
       "type": "timeseries",
+      "title": "Publisher Processing",
       "targets": [
         {
           "expr": "rate(publisher_processing_seconds_sum[5m]) / rate(publisher_processing_seconds_count[5m])"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 20
+        "x": 18,
+        "y": 12,
+        "w": 6,
+        "h": 8
+      }
+    },
+
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "RabbitMQ Queue Messages",
+      "targets": [
+        {
+          "expr": "rabbitmq_queue_messages"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 8,
+        "h": 8
+      }
+    },
+
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "RabbitMQ Consumers",
+      "targets": [
+        {
+          "expr": "rabbitmq_queue_consumers"
+        }
+      ],
+      "gridPos": {
+        "x": 8,
+        "y": 20,
+        "w": 8,
+        "h": 8
       }
     },
 
     {
       "id": 12,
-      "title": "RabbitMQ Published",
       "type": "timeseries",
+      "title": "RabbitMQ Ready Messages",
       "targets": [
         {
-          "expr": "rabbit_messages_published_total"
+          "expr": "rabbitmq_queue_messages_ready"
         }
       ],
       "gridPos": {
-        "h": 8,
+        "x": 16,
+        "y": 20,
         "w": 8,
-        "x": 0,
-        "y": 28
+        "h": 8
       }
     },
 
     {
       "id": 13,
-      "title": "RabbitMQ Consumed",
       "type": "timeseries",
+      "title": "Container CPU",
       "targets": [
         {
-          "expr": "rabbit_messages_consumed_total"
+          "expr": "rate(container_cpu_usage_seconds_total{name!=\"\"}[1m])",
+          "legendFormat": "{{name}}"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 28
+        "x": 0,
+        "y": 28,
+        "w": 12,
+        "h": 8
       }
     },
 
     {
       "id": 14,
-      "title": "RabbitMQ Backlog",
       "type": "timeseries",
+      "title": "Container Memory",
       "targets": [
         {
-          "expr": "rabbit_messages_published_total - rabbit_messages_consumed_total"
+          "expr": "container_memory_usage_bytes{name!=\"\"}",
+          "legendFormat": "{{name}}"
         }
       ],
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 28
+        "x": 12,
+        "y": 28,
+        "w": 12,
+        "h": 8
       }
     },
 
     {
       "id": 15,
-      "title": "Live Logs",
+      "type": "gauge",
+      "title": "Host CPU %",
+      "targets": [
+        {
+          "expr": "100 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 8,
+        "h": 6
+      }
+    },
+
+    {
+      "id": 16,
+      "type": "gauge",
+      "title": "Host RAM %",
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes)/node_memory_MemTotal_bytes*100"
+        }
+      ],
+      "gridPos": {
+        "x": 8,
+        "y": 36,
+        "w": 8,
+        "h": 6
+      }
+    },
+
+    {
+      "id": 17,
+      "type": "gauge",
+      "title": "Disk %",
+      "targets": [
+        {
+          "expr": "100-(node_filesystem_avail_bytes/node_filesystem_size_bytes*100)"
+        }
+      ],
+      "gridPos": {
+        "x": 16,
+        "y": 36,
+        "w": 8,
+        "h": 6
+      }
+    },
+
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Services Health",
+      "targets": [
+        {
+          "expr": "up"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 24,
+        "h": 4
+      }
+    },
+
+    {
+      "id": 19,
       "type": "logs",
+      "title": "Live Logs",
       "datasource": {
         "type": "loki",
         "uid": "Loki"
@@ -269,11 +349,12 @@
         }
       ],
       "gridPos": {
-        "h": 12,
-        "w": 24,
         "x": 0,
-        "y": 36
+        "y": 46,
+        "w": 24,
+        "h": 14
       }
     }
+
   ]
 }

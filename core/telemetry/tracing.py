@@ -1,15 +1,5 @@
-import uuid
+from opentelemetry import trace
 
-
-def generate_trace_id():
-
-    return str(
-        uuid.uuid4()
-    )
-
-
-def generate_event_id():
-
-    return str(
-        uuid.uuid4()
-    )
+tracer = trace.get_tracer(
+    "bytedeals"
+)

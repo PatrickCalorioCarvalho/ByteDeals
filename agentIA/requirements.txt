@@ -2,3 +2,6 @@ aio-pika
 httpx
 prometheus-client
 pydantic
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-exporter-otlp

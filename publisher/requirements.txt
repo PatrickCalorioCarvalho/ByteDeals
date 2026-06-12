@@ -1,3 +1,6 @@
 aio-pika
 python-telegram-bot
 prometheus-client
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-exporter-otlp

@@ -51,6 +51,51 @@ services:
     volumes:
       - ./infra/loki/config.yml:/etc/loki/config.yml
       - loki-data:/loki
+  tempo:
+    image: grafana/tempo:latest
+    container_name: bytedeals-tempo
+    command:
+      - "-config.file=/etc/tempo.yaml"
+    volumes:
+      - ./infra/tempo/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    restart: unless-stopped
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter:latest
+    container_name: bytedeals-rabbitmq-exporter
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: ${RABBITMQ_USER}
+      RABBIT_PASSWORD: ${RABBITMQ_PASS}
+    ports:
+      - "9419:9419"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: bytedeals-cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    privileged: true
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: bytedeals-node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
 
   promtail:
     image: grafana/promtail:latest

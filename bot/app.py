@@ -35,7 +35,6 @@ publisher = RabbitPublisher()
 
 start_http_server(8001)
 
-
 async def handle_message(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE

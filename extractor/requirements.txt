@@ -4,3 +4,6 @@ pydantic
 beautifulsoup4
 lxml
 httpx
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-exporter-otlp

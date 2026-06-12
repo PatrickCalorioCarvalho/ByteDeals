@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: ByteDeals
+    folder: ByteDeals
+    type: file
+
+    options:
+      path: /var/lib/grafana/dashboards

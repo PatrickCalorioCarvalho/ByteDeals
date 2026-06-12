@@ -1,0 +1,279 @@
+{
+  "id": null,
+  "uid": "bytedeals-ops",
+  "title": "ByteDeals Operations Center",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "editable": true,
+  "panels": [
+
+    {
+      "id": 1,
+      "title": "Bot Messages",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "bot_messages_received_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 2,
+      "title": "Products Extracted",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "product_extracted_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 3,
+      "title": "Products Enriched",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "product_enriched_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 4,
+      "title": "Products Published",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "product_published_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 5,
+      "title": "Total Errors",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "errors_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 6,
+      "title": "Events",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "events_total"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 7,
+      "title": "Pipeline Flow",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "product_received_total"
+        },
+        {
+          "expr": "product_extracted_total"
+        },
+        {
+          "expr": "product_enriched_total"
+        },
+        {
+          "expr": "product_published_total"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      }
+    },
+
+    {
+      "id": 8,
+      "title": "Bot Processing Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(bot_processing_seconds_sum[5m]) / rate(bot_processing_seconds_count[5m])"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      }
+    },
+
+    {
+      "id": 9,
+      "title": "Extractor Processing Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(extractor_processing_seconds_sum[5m]) / rate(extractor_processing_seconds_count[5m])"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      }
+    },
+
+    {
+      "id": 10,
+      "title": "AI Generation Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(ai_generation_seconds_sum[5m]) / rate(ai_generation_seconds_count[5m])"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      }
+    },
+
+    {
+      "id": 11,
+      "title": "Publisher Processing Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(publisher_processing_seconds_sum[5m]) / rate(publisher_processing_seconds_count[5m])"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      }
+    },
+
+    {
+      "id": 12,
+      "title": "RabbitMQ Published",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_published_total"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 28
+      }
+    },
+
+    {
+      "id": 13,
+      "title": "RabbitMQ Consumed",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_consumed_total"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 28
+      }
+    },
+
+    {
+      "id": 14,
+      "title": "RabbitMQ Backlog",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_published_total - rabbit_messages_consumed_total"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 28
+      }
+    },
+
+    {
+      "id": 15,
+      "title": "Live Logs",
+      "type": "logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "targets": [
+        {
+          "expr": "{job=\"docker\"}"
+        }
+      ],
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      }
+    }
+  ]
+}

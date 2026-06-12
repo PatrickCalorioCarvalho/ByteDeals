@@ -39,6 +39,8 @@ services:
       - .env
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
 
   loki:
     image: grafana/loki:latest
@@ -47,6 +49,7 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
+      - ./infra/loki/config.yml:/etc/loki/config.yml
       - loki-data:/loki
 
   promtail:
@@ -55,7 +58,7 @@ services:
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./infra/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - ./infra/promtail/config.yml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki

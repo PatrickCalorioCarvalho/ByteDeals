@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Mensagens Publicadas",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_published_total"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "title": "Mensagens Consumidas",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_consumed_total"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+    },
+    {
+      "id": 3,
+      "title": "Backlog",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rabbit_messages_published_total - rabbit_messages_consumed_total"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 }
+    }
+  ],
+  "schemaVersion": 39,
+  "title": "ByteDeals RabbitMQ",
+  "version": 1
+}

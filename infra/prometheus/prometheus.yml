@@ -2,12 +2,23 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: "bot"
-    static_configs:
-      - targets:
-          - "bot:8001"
 
-  - job_name: "extractor"
+  - job_name: bot
     static_configs:
       - targets:
-          - "extractor:8002"
+          - bot:8001
+
+  - job_name: extractor
+    static_configs:
+      - targets:
+          - extractor:8002
+
+  - job_name: agentia
+    static_configs:
+      - targets:
+          - agentia:8003
+
+  - job_name: publisher
+    static_configs:
+      - targets:
+          - publisher:8004

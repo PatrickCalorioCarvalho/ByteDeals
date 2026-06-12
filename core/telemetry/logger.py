@@ -1,26 +1,55 @@
-import logging
 import json
+import logging
 import sys
 
-class JsonFormatter(logging.Formatter):
+from core.telemetry.context import (
+    get_context
+)
 
-    def format(self, record):
+
+class JsonFormatter(
+    logging.Formatter
+):
+
+    def format(
+        self,
+        record
+    ):
+
         payload = {
             "level": record.levelname,
             "message": record.getMessage(),
-            "service": getattr(record, "service", "unknown"),
-            "correlation_id": getattr(record, "correlation_id", None)
+            "logger": record.name
         }
-        
-        message = record.getMessage()
-        service = getattr(record, "service", "unknown")
-        correlation_id = getattr(record, "correlation_id", None)
-        
-        return f"{record.levelname} {message} | service={service} correlation_id={correlation_id}"
 
-logger = logging.getLogger("bytedeals")
-logger.propagate = False
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(JsonFormatter())
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+        payload.update(
+            get_context()
+        )
+
+        return json.dumps(
+            payload,
+            ensure_ascii=False
+        )
+
+
+logger = logging.getLogger(
+    "bytedeals"
+)
+
+logger.setLevel(
+    logging.INFO
+)
+
+handler = logging.StreamHandler(
+    sys.stdout
+)
+
+handler.setFormatter(
+    JsonFormatter()
+)
+
+logger.handlers.clear()
+
+logger.addHandler(
+    handler
+)
